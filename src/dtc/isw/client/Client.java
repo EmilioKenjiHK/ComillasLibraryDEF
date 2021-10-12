@@ -1,4 +1,4 @@
-package icai.dtc.isw.client;
+package dtc.isw.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,18 +10,18 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//import dtc.isw.domain.Customer;
 import org.apache.log4j.Logger;
 
-import icai.dtc.isw.configuration.PropertiesISW;
-import icai.dtc.isw.domain.Customer;
-import icai.dtc.isw.message.Message;
+import dtc.isw.configuration.PropertiesISW;
+import dtc.isw.message.Message;
 
 public class Client {
     private String host;
     private int port;
     final static Logger logger = Logger.getLogger(Client.class);
 
-    public static void main(String args[]) {
+    public int enviar(String situacion, HashMap<String,Object> session) {
         //Configure connections
         String host;
         host = PropertiesISW.getInstance().getProperty("host");
@@ -30,33 +30,36 @@ public class Client {
         //Create a cliente class
         Client cliente=new Client(host, port);
 
-        HashMap<String,Object> session=new HashMap<String, Object>();
         //session.put("/getCustomer","");
 
         Message mensajeEnvio=new Message();
         Message mensajeVuelta=new Message();
-        mensajeEnvio.setContext("/getCustomer");
+        mensajeEnvio.setContext(situacion);
         mensajeEnvio.setSession(session);
         cliente.sent(mensajeEnvio,mensajeVuelta);
-
-
+        
         switch (mensajeVuelta.getContext()) {
-            case "/getCustomerResponse":
+           /* case "/getCustomerResponse":
                 ArrayList<Customer> customerList=(ArrayList<Customer>)(mensajeVuelta.getSession().get("Customer"));
                 for (Customer customer : customerList) {
                     System.out.println("He leído el id: "+customer.getId()+" con nombre: "+customer.getName());
                 }
                 break;
+            */
+            case "/checkCustomerResponse":
+                System.out.println("\nSe ha comprobado.");
+                return 1;
 
             default:
                 Logger.getRootLogger().info("Option not found");
                 System.out.println("\nError a la vuelta");
-                break;
+                return 0;
 
         }
         //System.out.println("3.- En Main.- El valor devuelto es: "+((String)mensajeVuelta.getSession().get("Nombre")));
     }
 
+    public Client(){}
     public Client(String host, int port) {
         this.host=host;
         this.port=port;
@@ -72,13 +75,15 @@ public class Client {
             OutputStream out = null;
             InputStream in = null;
 
+
             try {
                 echoSocket = new Socket(host, port);
+
                 in = echoSocket.getInputStream();
                 out = echoSocket.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
 
-                //Create the objetct to send
+                //Create the object to send
                 objectOutputStream.writeObject(messageOut);
 
                 // create a DataInputStream so we can read data from it.

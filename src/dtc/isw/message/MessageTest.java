@@ -1,4 +1,4 @@
-package icai.dtc.isw.message;
+package dtc.isw.message;
 
 import static org.junit.jupiter.api.Assertions.*;
 

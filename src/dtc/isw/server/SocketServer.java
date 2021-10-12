@@ -1,4 +1,4 @@
-package icai.dtc.isw.server;
+package dtc.isw.server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,9 +10,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import icai.dtc.isw.controler.CustomerControler;
-import icai.dtc.isw.domain.Customer;
-import icai.dtc.isw.message.Message;
+import dtc.isw.controler.CustomerControler;
+import dtc.isw.domain.Customer;
+import dtc.isw.message.Message;
 
 public class SocketServer extends Thread {
     public static final int PORT_NUMBER = 8081;
@@ -49,7 +49,24 @@ public class SocketServer extends Thread {
                     mensajeOut.setSession(session);
                     objectOutputStream.writeObject(mensajeOut);
                     break;
-
+                case "/loginUser":
+                    CustomerControler customerControlerlogin = new CustomerControler();
+                    String user = ((Customer) mensajeIn.getSession().get("id")).getUser();
+                    String password = ((Customer) mensajeIn.getSession().get("id")).getPassword();
+                    boolean u = customerControlerlogin.checkCustomer(user,1);
+                    boolean p = customerControlerlogin.checkCustomer(password,2);
+                    if(u && p)
+                    {
+                        mensajeOut.setContext("/checkCustomerResponse");
+                        objectOutputStream.writeObject(mensajeOut);
+                        break;
+                    }
+                    else
+                    {
+                        mensajeOut.setContext("");
+                        objectOutputStream.writeObject(mensajeOut);
+                        break;
+                    }
 
                 default:
                     System.out.println("\nParámetro no encontrado");

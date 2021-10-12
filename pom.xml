@@ -18,7 +18,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <configuration>
-                    <mainClass>icai.dtc.isw.server.SocketServer</mainClass>
+                    <mainClass>SocketServer</mainClass>
                 </configuration>
             </plugin>
         </plugins>
